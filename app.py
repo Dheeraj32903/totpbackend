@@ -24,13 +24,13 @@ SECRET_FILE = os.path.join(BASE_DIR, "secret.txt")
 
 
 def get_secret() -> str:
-    # First try environment variable (for Render deployment)
+    # First check environment variable (Render)
     secret = os.getenv("TOTP_SECRET")
 
     if secret:
         return secret
 
-    # Fallback to secret.txt for local development
+    # Fallback to file for local development
     if not os.path.exists(SECRET_FILE):
         raise HTTPException(status_code=500, detail="secret.txt not found")
 
