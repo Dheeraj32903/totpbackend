@@ -24,7 +24,13 @@ SECRET_FILE = os.path.join(BASE_DIR, "secret.txt")
 
 
 def get_secret() -> str:
-    """Read the secret from secret.txt"""
+    # First try environment variable (for Render deployment)
+    secret = os.getenv("TOTP_SECRET")
+
+    if secret:
+        return secret
+
+    # Fallback to secret.txt for local development
     if not os.path.exists(SECRET_FILE):
         raise HTTPException(status_code=500, detail="secret.txt not found")
 
@@ -61,4 +67,4 @@ def root():
 
 
 if __name__ == "__main__":
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("app:app", host="127.0.0.1", port=8000, reload=True)
