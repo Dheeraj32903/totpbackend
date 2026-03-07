@@ -5,7 +5,6 @@ import pyotp
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-
 app = FastAPI()
 
 app.add_middleware(
@@ -16,21 +15,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Base directory of project
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-# Path to secret.txt
 SECRET_FILE = os.path.join(BASE_DIR, "secret.txt")
 
-
 def get_secret() -> str:
-    # First check environment variable (Render)
     secret = os.getenv("TOTP_SECRET")
 
     if secret:
         return secret
 
-    # Fallback to file for local development
     if not os.path.exists(SECRET_FILE):
         raise HTTPException(status_code=500, detail="secret.txt not found")
 
@@ -61,7 +54,8 @@ def get_otp() -> dict:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/")
+# FIX: allow GET and HEAD
+@app.api_route("/", methods=["GET", "HEAD"])
 def root():
     return {"message": "Secure TOTP API running"}
 
